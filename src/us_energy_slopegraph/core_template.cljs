@@ -1,6 +1,6 @@
 (ns us-energy-slopegraph.core
   (:require [cljsjs.d3]
-            [clojure.string :as string]))
+            [clojure.string :as str]))
 
 (enable-console-print!)
 
