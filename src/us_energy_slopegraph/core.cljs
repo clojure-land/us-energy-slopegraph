@@ -1,8 +1,11 @@
 (ns us-energy-slopegraph.core
   (:require [cljsjs.d3]
-            [clojure.string :as string]))
+            [clojure.string :as str]))
 
 (enable-console-print!)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; data
 
 (def height 450)
 (def width 540)
@@ -27,17 +30,17 @@
       (.domain #js [0 1])
       (.range #js [(- height 15) 0])))
 
-(defn attrs [el m]
-  (doseq [[k v] m]
-    (.attr el k v)))
-
 (defn format-percent [value]
   ((.format js/d3 ".2%") value))
 
 (defn format-name [name-str]
-  (->
-   (string/replace name-str "-" " ")
-   (string/capitalize)))
+  (-> name-str
+      (str/replace "-" " ")
+      (str/capitalize)))
+
+(defn attrs [el m]
+  (doseq [[k v] m]
+    (.attr el k v)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; draw functions
@@ -75,23 +78,22 @@
               "y1" (fn [[_ v]]
                      (height-scale v))
               "y2" (fn [[k _]]
-                     (height-scale (get data-col-2 k)))}
-              )))
+                     (height-scale (get data-col-2 k)))})))
 
 (defn draw-column [svg data-col index custom-attrs]
-  (-> (data-join svg "text" (str "slopegraph-column-" index) data-col)
+  (-> (data-join svg "text" (str "text.slopegraph-column-" index) data-col)
       (.text (fn [[k v]] (str (format-name (name k)) " " (format-percent v))))
       (attrs (merge custom-attrs
-                    {"y" (fn [[_ v]] (height-scale v))})
-             )))
+                    {"y" (fn [[_ v]] (height-scale v))}))))
 
 (defn draw-slopegraph [svg data]
   (let [data-2005 (get data 2005)
         data-2015 (get data 2015)]
-    (draw-header svg [2005 2015])
 
     (draw-column svg data-2005 1 {"x" column-1-start})
     (draw-column svg data-2015 2 {"x" column-space})
+
+    (draw-header svg [2005 2015])
     (draw-line svg data-2005 data-2015)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -106,7 +108,7 @@
 
 (defn remove-svg []
   (-> js/d3
-      (.select "#slopegraph svg")
+      (.selectAll "#slopegraph svg")
       (.remove)))
 
 (defn ^:export main []

@@ -15,9 +15,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; draw functions
 
-(defn data-join [parent tag class data]
-  )
-
 (defn draw-header [svg years]
   )
 
